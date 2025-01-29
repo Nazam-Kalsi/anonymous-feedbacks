@@ -1,5 +1,6 @@
 import mongoose, { Schema, model, Document } from "mongoose";
 import { AutoIncrementID } from "@typegoose/auto-increment";
+import { MessageInterface } from "./message.model";
 
 export interface UserInterface extends Document {
   userName: string;
@@ -8,6 +9,7 @@ export interface UserInterface extends Document {
   isVerified: boolean;
   verificationToken: string;
   verificationTokenExpiry: Date;
+  messages: MessageInterface[];
 }
 
 const UserSchema: Schema<UserInterface> = new Schema(
@@ -37,11 +39,15 @@ const UserSchema: Schema<UserInterface> = new Schema(
       type: Date,
       default: null,
     },
+    messages: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Message'
+    }]
   },
   { timestamps: true }
 );
 
-UserSchema.plugin(AutoIncrementID, {});
+// UserSchema.plugin(AutoIncrementID, {});
 const User = (mongoose.models.User as mongoose.Model<UserInterface>) ||
   model<UserInterface>("User", UserSchema);
 
