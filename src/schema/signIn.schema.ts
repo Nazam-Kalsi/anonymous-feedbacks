@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const signInSchema = z.object({
+export const signInSchema = z.object({
     userName: z.string()
     .min(3,{message: 'username is of minimum 3 characters'})
     .max(20,{message:'username is atmost of 20 characters'})
