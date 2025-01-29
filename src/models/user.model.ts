@@ -7,8 +7,8 @@ export interface UserInterface extends Document {
   password: string;
   email: string;
   isVerified: boolean;
-  verificationToken: string;
-  verificationTokenExpiry: Date;
+  verificationToken: string | null;
+  verificationTokenExpiry: Date | null;
   messages: MessageInterface[];
 }
 
@@ -34,10 +34,12 @@ const UserSchema: Schema<UserInterface> = new Schema(
     verificationToken: {
       type: String,
       default: null,
+      required: false,
     },
     verificationTokenExpiry: {
       type: Date,
       default: null,
+      required: false,
     },
     messages: [{
       type: mongoose.Schema.Types.ObjectId,

@@ -4,6 +4,7 @@ import dbConnect from "@/lib/db";
 import User from "@/models/user.model";
 import bcrypt from "bcrypt";
 import ApiRes from "@/lib/apiRes";
+
 export async function POST(req: NextRequest) {
   await dbConnect();
   try {
@@ -37,6 +38,8 @@ export async function POST(req: NextRequest) {
         verificationTokenExpiry: new Date(Date.now() + 60 * 60 * 1000), // 1 hour from now
         verificationToken: verificationCode,
       });
+
+      if(!newUser)ApiRes(400,"error while creating user.");   
     }
 
     //mail
