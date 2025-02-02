@@ -43,14 +43,14 @@ export async function POST(req: NextRequest) {
     }
 
     //mail
-      const emailResponse = await sendVerificatioEmail({
-        email,
-        userName,
-        verificationCode,
-      });
-      if (!emailResponse.success) {
-        return ApiRes(400,"error while sending mail for verification",emailResponse.message);        
-    }
+    //   const emailResponse = await sendVerificatioEmail({
+    //     email,
+    //     userName,
+    //     verificationCode,
+    //   });
+    //   if (!emailResponse.success) {
+    //     return ApiRes(400,"error while sending mail for verification",emailResponse.message);        
+    // }
     return ApiRes(200,"User registered successfully and mail sent for verification.");
     
   } catch (error) {
