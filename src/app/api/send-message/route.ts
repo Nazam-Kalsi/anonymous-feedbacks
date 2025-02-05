@@ -1,21 +1,36 @@
 import ApiRes from "@/lib/apiRes";
-import { handler } from "@/lib/handler";
-import { getServerSession } from "next-auth";
+import dbConnect from "@/lib/db";
 import { NextRequest } from "next/server";
 import { authOptions } from "../auth/[...nextauth]/options";
-import { User as NextAuthUser } from "next-auth";
+import { getServerSession, User as NextAuthUser } from "next-auth";
+import Message from "@/models/message.model";
+import User from "@/models/user.model";
 
-async function sendMessage(req:NextRequest){
-    const session=await getServerSession(authOptions);
-    const sessionUser:NextAuthUser = session?.user as NextAuthUser;
+export async function POST(req: NextRequest) {
+    dbConnect();
+    try {
+        const session = await getServerSession(authOptions);
+        const sender: NextAuthUser = session?.user as NextAuthUser;
+        if (!sender || !session) return ApiRes(404, "not Authenticated");
 
-    if(!session || !sessionUser) return ApiRes(401,'Not Authenticated!');
+        const { userName, messageContent } = await req.json();
 
-    const {message,recieverId} = await req.json();
-    
+        const reciever: NextAuthUser = await User.findOne({ userName }) as NextAuthUser;
+        if (!reciever) return ApiRes(404, "user not found");
 
+        if (!reciever.isAcceptingMessages) return ApiRes(400, "reciever isn't recieving messages at this movement,");
 
-    return ApiRes(200,"hello");
+        const message = await Message.create({
+            sender: sender._id,
+            reciever: reciever._id,
+            message: messageContent,
+        });
+
+        if (!message) return ApiRes(400, "message not sent, try again later");
+
+        return ApiRes(200, "message sent succesfully");
+    } catch (error) {
+        console.log(error);
+        return ApiRes(500, "Internal server error");
+    }
 }
-
-export const POST = handler(sendMessage);

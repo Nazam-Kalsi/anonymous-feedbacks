@@ -22,6 +22,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
+import { signIn } from 'next-auth/react'
 
 type Props = {}
 
@@ -34,13 +35,28 @@ const page = (props: Props) => {
   const form = useForm<z.infer<typeof signInSchema>>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
-      userName: "",
-      password: "",
+      userName: "nzm",
+      password: "nnzzmm",
     },
   })
 
-  function onSubmit(values: z.infer<typeof signInSchema>) {
+  async function onSubmit(values: z.infer<typeof signInSchema>) {
     console.log(values);
+    try {
+      const userSignIn = await signIn('credentials',{
+        userName:values.userName,
+        password:values.password,
+        redirect: false,
+      });
+  
+      if(userSignIn) console.log("user : ",userSignIn);
+      else{
+        return;
+      }
+    }
+     catch (error) {
+      console.log("error : ",error);
+    }
   }
 
   return (
@@ -87,7 +103,7 @@ const page = (props: Props) => {
                       name="userName"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Username</FormLabel>
+                          <FormLabel>Username / email</FormLabel>
                           <FormControl>
                             <Input placeholder="" {...field} />
                           </FormControl>
