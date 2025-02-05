@@ -7,8 +7,9 @@ export interface UserInterface extends Document {
   password: string;
   email: string;
   isVerified: boolean;
-  verificationToken: string | null;
+  verificationToken: string | null |number;
   verificationTokenExpiry: Date | null;
+  isAcceptingMessages:boolean;
   messages: MessageInterface[];
 }
 
@@ -30,6 +31,10 @@ const UserSchema: Schema<UserInterface> = new Schema(
     isVerified: {
       type: Boolean,
       default: false,
+    },
+    isAcceptingMessages: {
+      type: Boolean,
+      default: true,
     },
     verificationToken: {
       type: String,

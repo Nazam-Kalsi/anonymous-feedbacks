@@ -21,13 +21,20 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const existingUnverifiedUser = await User.findOne({
+    const existingUserViaEmail = await User.findOne({
       email,
-    });
-
+    });    
     const verificationCode = Math.floor(100000 + Math.random() * 900000);
-    if (existingUnverifiedUser) {
-        
+    
+    if (existingUserViaEmail) {
+      if(existingUserViaEmail.isVerified) return ApiRes(400,"user with this email already exists");
+      else{
+        const hashedPassword = await bcrypt.hash(password,10);
+        existingUserViaEmail.password=hashedPassword;
+        existingUserViaEmail.verificationToken=verificationCode;
+        existingUserViaEmail.verificationTokenExpiry=new Date(Date.now()+60*60*1000);
+        await existingUserViaEmail.save();
+        }
     } else {
       const hashedPassword = await bcrypt.hash(password, 10);
       const newUser = await User.create({
@@ -35,6 +42,7 @@ export async function POST(req: NextRequest) {
         email,
         password: hashedPassword,
         isVerified: false,
+        isAcceptingMessages: true,
         verificationTokenExpiry: new Date(Date.now() + 60 * 60 * 1000), // 1 hour from now
         verificationToken: verificationCode,
       });
