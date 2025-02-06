@@ -57,23 +57,24 @@ function page({ }: Props) {
         }
     }
     return (
-        <>
+        <div className=''>
             <div className='flex justify-end'>
                 <ThemeProvider />
             </div>
-            <div className="flex flex-col items-center justify-center p-6 md:p-10 overflow-hidden">
+            <div className="flex flex-col items-center justify-start overflow-hidden">
                 <div className="w-full max-w-sm md:max-w-3xl">
-                    <div className='mb-8 flex flex-col items-center'>
+                    <div className='mb-6 flex flex-col items-center'>
                         <GalleryVerticalEnd className="size-6" />
                         {/* <h1 className='font-bold text-2xl'>Create your Account</h1> */}
                         <MorphingText texts={txt} />
                     </div>
-                    <div className={cn("flex flex-col gap-6",)}>
+                    <div className={cn("flex flex-col gap-4",)}>
                         <Card className="overflow-hidden">
                             <CardContent className="grid p-0 md:grid-cols-2">
 
                                 <Form {...form}>
-                                    <form className={cn("flex flex-col gap-4 p-4")} onSubmit={form.handleSubmit(onSubmit)}>
+                                    <form className={cn("flex flex-col gap-4 p-4 px-8")} onSubmit={form.handleSubmit(onSubmit)}>
+                                        <h2 className='text-center font-bold text-2xl'>Create your Account</h2>
                                         <FormField
                                             control={form.control}
                                             name="userName"
@@ -146,7 +147,7 @@ function page({ }: Props) {
                 </div>
             </div>
 
-        </>
+        </div>
     )
 }
 
