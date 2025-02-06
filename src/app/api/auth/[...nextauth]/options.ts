@@ -27,7 +27,7 @@ export const authOptions: NextAuthOptions = {
           if (!user.isVerified) throw new Error("Please verify your account.");
 
           const authentication = await bcrypt.compare(
-            credentials.password,
+            credentials.password, //! recieve password then the hashed password.
             user.password
           );
 
@@ -67,5 +67,5 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
   },
-  secret: process.env.NEXT_AUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET, //? use NEXTAUTH_SECRET instead of NEXT_AUTH_SECRET
 };

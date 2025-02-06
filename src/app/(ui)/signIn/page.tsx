@@ -1,5 +1,5 @@
 "use client"
-import React from 'react'
+import React, { useEffect } from 'react'
 import { ThemeProvider } from '@/components/toggleTheme'
 import { GalleryVerticalEnd, Eye, EyeOff } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -22,13 +22,21 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
-import { signIn } from 'next-auth/react'
+import { signIn, getSession } from 'next-auth/react'
 
 type Props = {}
 
 const page = (props: Props) => {
+  
+  useEffect(() => {
+    ; (async () => {
+      const session = await getSession();
+      console.log(session);
+    })();
+  }, [])
+
   const [passwordVisible, setPasswordVisible] = React.useState(false);
-  const ShowPassword=(e:any)=>{
+  const ShowPassword = (e: any) => {
     e.preventDefault();
     setPasswordVisible(!passwordVisible);
   }
@@ -43,19 +51,19 @@ const page = (props: Props) => {
   async function onSubmit(values: z.infer<typeof signInSchema>) {
     console.log(values);
     try {
-      const userSignIn = await signIn('credentials',{
-        userName:values.userName,
-        password:values.password,
+      const userSignIn = await signIn('credentials', {
+        userName: values.userName,
+        password: values.password,
         redirect: false,
       });
-  
-      if(userSignIn) console.log("user : ",userSignIn);
-      else{
+
+      if (userSignIn) console.log("user : ", userSignIn);
+      else {
         return;
       }
     }
-     catch (error) {
-      console.log("error : ",error);
+    catch (error) {
+      console.log("error : ", error);
     }
   }
 
@@ -124,12 +132,12 @@ const page = (props: Props) => {
                           </div>
                           <FormControl>
                             <div className='relative'>
-                            <Input type={passwordVisible?'text':'password'} {...field} />
-                            <button onClick={(e)=>ShowPassword(e)}
-                            className='absolute right-2 top-2'>
-                            {!passwordVisible ? <Eye strokeWidth={0.5} /> : <EyeOff strokeWidth={0.5} />
-                            }
-                            </button>
+                              <Input type={passwordVisible ? 'text' : 'password'} {...field} />
+                              <button onClick={(e) => ShowPassword(e)}
+                                className='absolute right-2 top-2'>
+                                {!passwordVisible ? <Eye strokeWidth={0.5} /> : <EyeOff strokeWidth={0.5} />
+                                }
+                              </button>
                             </div>
                           </FormControl>
                           <FormDescription>

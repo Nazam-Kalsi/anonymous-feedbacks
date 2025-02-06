@@ -12,6 +12,7 @@ export async function POST(req: NextRequest) {
         const session = await getServerSession(authOptions);
         const sender: NextAuthUser = session?.user as NextAuthUser;
         if (!sender || !session) return ApiRes(404, "not Authenticated");
+        
 
         const { userName, messageContent } = await req.json();
 
