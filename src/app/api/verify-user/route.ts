@@ -6,14 +6,14 @@ import ApiRes from "@/lib/apiRes";
 export async function POST(req: NextRequest) {
   await dbConnect();
   try {
-    const { userName, otp } = await req.json();
+    const { userName, verificationCode } = await req.json();
     const user = await User.findOne({ userName });
     if (!user) return ApiRes(400, "User not found.");
-
+    
     if ((user.verificationTokenExpiry as Date) < new Date()) {
         return ApiRes(400,"Expired verification code");
     }
-    if (user.verificationToken !== otp) {
+    if (user.verificationToken !== verificationCode) {
         return ApiRes(400,"Incorrect verification code");
     }
     user.isVerified=true;

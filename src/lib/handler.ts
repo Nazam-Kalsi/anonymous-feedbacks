@@ -5,8 +5,8 @@ import ApiRes from "./apiRes";
 
 export function handler(h: (req: NextRequest) => Promise<NextResponse>) {
   return async function (req: NextRequest) {
-    await dbConnect();
     try {
+      await dbConnect();
       return await h(req);
     } catch (error) {
       console.error("API Error:", error);

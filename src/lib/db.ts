@@ -18,7 +18,7 @@ const dbConnect = async (): Promise<void> => {
     }
     const database = await mongoose.connect(mongoDbUrl);
     if (database) {
-      console.log(database);
+      // console.log(database);
       connection.isConnected = database.connections[0].readyState;
       console.log("Database connected successfully");
     }

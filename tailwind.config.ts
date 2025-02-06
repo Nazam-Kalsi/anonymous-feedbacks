@@ -57,7 +57,8 @@ export default {
   			sm: 'calc(var(--radius) - 4px)'
   		},
   		animation: {
-  			rippling: 'rippling var(--duration) ease-out'
+  			rippling: 'rippling var(--duration) ease-out',
+			"caret-blink": "caret-blink 1.25s ease-out infinite",
   		},
   		keyframes: {
   			rippling: {
@@ -68,7 +69,11 @@ export default {
   					transform: 'scale(2)',
   					opacity: '0'
   				}
-  			}
+  			},
+			  "caret-blink": {
+				"0%,70%,100%": { opacity: "1" },
+				"20%,50%": { opacity: "0" },
+			  },
   		}
   	}
   },
