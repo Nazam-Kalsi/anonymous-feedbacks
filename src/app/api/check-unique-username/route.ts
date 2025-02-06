@@ -16,10 +16,11 @@ export async function POST(req: NextRequest) {
     const queryParameter = {
       userName: searchParams.get("userName"),
     };
-    // const username=searchParams.get('username');
+    // { params }: { params: { un: string } } in params
+    // const { un }= params;//when api/user/[un]
     const res = userNameVerificationSchema.safeParse(queryParameter);
     console.log("result : ", res);
-    console.log("searchParams : ", searchParams);
+    // console.log("searchParams : ",queryParameter);
 
     if (!res.success) {
       const errors = res.error.format().userName?._errors;

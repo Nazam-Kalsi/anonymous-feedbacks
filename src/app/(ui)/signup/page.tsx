@@ -1,6 +1,6 @@
 "use client"
-import React, { useState } from 'react'
-import { ThemeProvider } from '@/components/toggleTheme'
+import React, { useEffect, useState } from 'react'
+import { ThemeProvider } from '@/components/customComponents/toggleTheme'
 import { GalleryVerticalEnd, Eye, EyeOff } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -12,7 +12,8 @@ import { z } from "zod"
 import { signUpSchema } from '@/schema/signUp.schema'
 import Link from "next/link"
 import { MorphingText } from '@/components/ui/morphing-text'
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
+import { Loader2 } from 'lucide-react'
 import {
     Form,
     FormControl,
@@ -22,7 +23,12 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form"
-import { Card, CardContent } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card';
+import { useRouter } from 'next/navigation'
+import Loading from '@/components/customComponents/loading'
+import { useDebounceValue } from 'usehooks-ts'
+import { ApiResponse } from '@/types/apiResponse'
+
 type Props = {}
 const txt = [
     'Create Account',
@@ -31,7 +37,12 @@ const txt = [
     'to anyone.',
 ]
 function page({ }: Props) {
-    const [passwordVisible, setPasswordVisible] = useState(false);
+    const route = useRouter();
+    const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [checkUserName, setCheckUserName] = useState<boolean>(false);
+    const [userNameStatus, setUserNameStatus] = useState<any>(null);
+
     const form = useForm<z.infer<typeof signUpSchema>>({
         resolver: zodResolver(signUpSchema),
         defaultValues: {
@@ -40,24 +51,52 @@ function page({ }: Props) {
             password: "",
         },
     })
+    const watchUserName = form.watch('userName');
+    const debounceUserName = useDebounceValue(watchUserName, 1500);
+
+
+
+    useEffect(() => {
+        ; (async () => {
+            try {
+                setCheckUserName(true);
+                if (debounceUserName[0].trim().length === 0) {
+                    return;
+                }
+                const req = await axios.post(`/api/check-unique-username?userName=${debounceUserName[0]}`);
+                setUserNameStatus(req.data);
+            } catch (error) {
+                const axiosError = error as AxiosError<ApiResponse>;
+                setUserNameStatus(axiosError?.response?.data);
+            } finally {
+                console.log("Username status : ", userNameStatus)
+                setCheckUserName(false);
+            }
+        })();
+    }, [debounceUserName[0]])
     const ShowPassword = (e: any) => {
         e.preventDefault();
         setPasswordVisible(!passwordVisible);
     }
+
     async function onSubmit(values: z.infer<typeof signUpSchema>) {
-        console.log(values);
-        const res = await axios.post('/api/sign-up', values, {
-            headers: {
-                'Content-Type': 'multipart/form-data'
+        try {
+            setLoading(true);
+            const res = await axios.post('/api/sign-up', values)
+            if (res) {
+                console.log(res.data);
+                route.push('/')
             }
-        }
-        )
-        if(res){
-            console.log(res.data);
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setLoading(false);
         }
     }
+
     return (
         <div className=''>
+            {loading && <Loading/>}
             <div className='flex justify-end'>
                 <ThemeProvider />
             </div>
@@ -71,7 +110,6 @@ function page({ }: Props) {
                     <div className={cn("flex flex-col gap-4",)}>
                         <Card className="overflow-hidden">
                             <CardContent className="grid p-0 md:grid-cols-2">
-
                                 <Form {...form}>
                                     <form className={cn("flex flex-col gap-4 p-4 px-8")} onSubmit={form.handleSubmit(onSubmit)}>
                                         <h2 className='text-center font-bold text-2xl'>Create your Account</h2>
@@ -84,8 +122,17 @@ function page({ }: Props) {
                                                     <FormControl>
                                                         <Input placeholder="username" {...field} />
                                                     </FormControl>
-                                                    <FormDescription>
-                                                    </FormDescription>
+                                                    {
+                                                        checkUserName ? (
+                                                            <Loader2 className="animate-spin" />
+                                                        ) : userNameStatus !== null ? (
+                                                            <FormDescription className={userNameStatus.success === false ? "text-red-600" : "text-green-600"}>
+                                                                {userNameStatus?.message}
+                                                            </FormDescription>
+                                                        ) : (
+                                                            <div></div>
+                                                        )
+                                                    }
                                                     <FormMessage />
                                                 </FormItem>
                                             )}
@@ -127,7 +174,8 @@ function page({ }: Props) {
                                                 </FormItem>
                                             )}
                                         />
-                                        <Button variant={'default'}>Login</Button>
+                                        <Button variant={'default'}>{
+                                            loading?<Loader2 className='animate-spin'/>:'Login'}</Button>
                                     </form>
                                 </Form>
                                 <div className="relative hidden bg-muted md:block">

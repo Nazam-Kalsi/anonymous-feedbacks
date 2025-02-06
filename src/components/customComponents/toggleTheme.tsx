@@ -1,8 +1,8 @@
 'use client'
 import React, { useEffect, useState } from "react"
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 import { SunMedium, Moon } from "lucide-react";
-import { RippleButton } from "./ui/ripple-button";
+import { RippleButton } from "@/components/ui/ripple-button";
 type Props = {
 className?:string,
 }

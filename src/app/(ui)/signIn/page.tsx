@@ -1,6 +1,6 @@
 "use client"
-import React, { useEffect } from 'react'
-import { ThemeProvider } from '@/components/toggleTheme'
+import React, { useEffect, useState } from 'react'
+import { ThemeProvider } from '@/components/customComponents/toggleTheme'
 import { GalleryVerticalEnd, Eye, EyeOff } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -12,7 +12,6 @@ import { z } from "zod"
 import { signInSchema } from "@/schema/signIn.schema"
 import Link from "next/link"
 import { DotPattern } from "@/components/ui/dot-pattern";
-
 import {
   Form,
   FormControl,
@@ -22,12 +21,25 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
-import { signIn, getSession } from 'next-auth/react'
+import { signIn, getSession, SignInResponse } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import Loading from '@/components/customComponents/loading'
+import { useToast } from "@/hooks/use-toast"
 
 type Props = {}
 
 const page = (props: Props) => {
-  
+  const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const { toast } = useToast();
+  const router = useRouter();
+
+
+  const ShowPassword = (e: any) => {
+    e.preventDefault();
+    setPasswordVisible(!passwordVisible);
+  }
+
   useEffect(() => {
     ; (async () => {
       const session = await getSession();
@@ -35,11 +47,6 @@ const page = (props: Props) => {
     })();
   }, [])
 
-  const [passwordVisible, setPasswordVisible] = React.useState(false);
-  const ShowPassword = (e: any) => {
-    e.preventDefault();
-    setPasswordVisible(!passwordVisible);
-  }
   const form = useForm<z.infer<typeof signInSchema>>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
@@ -49,26 +56,39 @@ const page = (props: Props) => {
   })
 
   async function onSubmit(values: z.infer<typeof signInSchema>) {
-    console.log(values);
+    setLoading(true);
     try {
       const userSignIn = await signIn('credentials', {
         userName: values.userName,
         password: values.password,
         redirect: false,
       });
-
-      if (userSignIn) console.log("user : ", userSignIn);
-      else {
+      if (!userSignIn?.ok) {
+        toast({
+          title: "Error while Login",
+          description: "Invalid credentials",
+        })
         return;
       }
+      // console.log("user : ", userSignIn);
+      toast({
+        title: "Login successfully",
+        description: "Wait while we redricting you to dashboard.",
+      })
+      router.push("/");
     }
     catch (error) {
       console.log("error : ", error);
     }
+    finally{
+      setLoading(false);
+    }
   }
+  
 
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
+       {loading && <Loading/>}
       <div className="relative hidden bg-muted lg:block">
         <img
           src="/placeholder.svg"
