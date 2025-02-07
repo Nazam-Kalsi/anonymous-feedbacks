@@ -26,10 +26,11 @@ import { useParams, useRouter } from "next/navigation";
 import { ApiResponse } from "@/types/apiResponse";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
+
 type Props = {};
 
 function page({}: Props) {
-  const params=useParams<{username:string}>();
+  const params=useParams<{id:string}>();
   const { toast } = useToast();
   const route = useRouter();
   const [loading,setLoading] = useState<boolean>(false);
@@ -46,21 +47,26 @@ function page({}: Props) {
         setLoading(true);
       const dataToSend = {
         verificationCode: values.verificationCode,
-        userName:params.username,
+        id:params.id,
       };
       const res = await axios.post(`/api/verify-user`,dataToSend);
-      console.log(res);
-      if(!res){
-          toast({
-              title: "Error",
-              description:'Incorrect OTP'
-          })
+      console.log(res.data.data.setNewPassword);
+
+      if(res.data.data.setNewPassword){
+        console.log("passwordchange");
+        toast({
+          title: "Verify successfully",
+          description:'Wait while we redricting to change password'
+      })
+        route.push(`/${params.id}/newPassword`);
+        return;
+
       }
       toast({
         title: "Verify successfullly",
         description:'Wait while we redricting to dashboard'
     })
-      route.push('/');
+      route.push('/'); //to dashboard
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;
       toast({

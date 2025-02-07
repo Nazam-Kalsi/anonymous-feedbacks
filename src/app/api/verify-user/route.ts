@@ -6,8 +6,9 @@ import ApiRes from "@/lib/apiRes";
 export async function POST(req: NextRequest) {
   await dbConnect();
   try {
-    const { userName, verificationCode } = await req.json();
-    const user = await User.findOne({ userName });
+    const { id, verificationCode } = await req.json();
+    // const user = await User.findOne({ userName });
+    const user = await User.findById(id);
     if (!user) return ApiRes(400, "User not found.");
     
     if ((user.verificationTokenExpiry as Date) < new Date()) {
@@ -16,10 +17,18 @@ export async function POST(req: NextRequest) {
     if (user.verificationToken !== verificationCode) {
         return ApiRes(400,"Incorrect verification code");
     }
-    user.isVerified=true;
-    user.verificationToken=null;
-    user.verificationTokenExpiry=null;
+    console.log(user);
+
+
+    
+    // user.verificationToken=null;
+    // user.verificationTokenExpiry=null;
+    // user.isVerified=true;
     await user.save();
+
+    if(user.updatePassword){
+      return ApiRes(200,"Account verification successfully for password change.",{setNewPassword:true})
+    }
 
     return ApiRes(200,"Account verified successfully");
     

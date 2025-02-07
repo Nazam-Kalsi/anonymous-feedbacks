@@ -4,12 +4,13 @@ import { MessageInterface } from "./message.model";
 
 export interface UserInterface extends Document {
   userName: string;
-  password: string;
+  password: string | null;
   email: string;
   isVerified: boolean;
   verificationToken: string | null |number;
   verificationTokenExpiry: Date | null;
   isAcceptingMessages:boolean;
+  updatePassword:boolean;
   messages: MessageInterface[];
 }
 
@@ -35,6 +36,10 @@ const UserSchema: Schema<UserInterface> = new Schema(
     isAcceptingMessages: {
       type: Boolean,
       default: true,
+    },
+    updatePassword: {
+      type: Boolean,
+      default: false,
     },
     verificationToken: {
       type: String,

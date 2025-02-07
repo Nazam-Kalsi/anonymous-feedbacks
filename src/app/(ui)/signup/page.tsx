@@ -85,7 +85,7 @@ function page({ }: Props) {
             const res = await axios.post('/api/sign-up', values)
             if (res) {
                 console.log(res.data);
-                route.push(`/verification/${values.userName}`)
+                route.push(`/${res.data.data}/verification`)
             }
         } catch (error) {
             console.log(error);

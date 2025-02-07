@@ -148,7 +148,7 @@ const page = (props: Props) => {
                         <FormItem>
                           <div className="flex items-center justify-between">
                             <FormLabel>Password</FormLabel>
-                            <Link className="text-xs text-gray-400" href='#'>Forget password ?</Link>
+                            <Link className="text-xs text-gray-400" href='/forgetPassword'>Forget password ?</Link>
                           </div>
                           <FormControl>
                             <div className='relative'>

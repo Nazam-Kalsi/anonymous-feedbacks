@@ -5,15 +5,15 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 interface Props{
     email:string;
     userName:string;
-    verificationCode:number | string;
+    verificationToken:number | string;
 }
-export const sendVerificatioEmail=async({email,userName,verificationCode}:Props):Promise<ApiResponse>=>{
+export const sendVerificatioEmail=async({email,userName,verificationToken}:Props):Promise<ApiResponse>=>{
     try {
         const { data, error } = await resend.emails.send({
             from: 'onboarding@resend.dev',
             to: email,
             subject: 'Account verification',
-            react: AccountVerificationEmailTemplate({ otp: verificationCode, recipientName: userName }),
+            react: AccountVerificationEmailTemplate({ otp: verificationToken, recipientName: userName }),
           });
         return {
             success:true,

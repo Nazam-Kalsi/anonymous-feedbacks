@@ -23,18 +23,18 @@ export async function POST(req: NextRequest) {
 
     const existingUserViaEmail = await User.findOne({
       email,
-    });    
-    const verificationCode = Math.floor(100000 + Math.random() * 900000);
-    
+    });
+    const verificationToken = Math.floor(100000 + Math.random() * 900000);
+
     if (existingUserViaEmail) {
-      if(existingUserViaEmail.isVerified) return ApiRes(400,"user with this email already exists");
-      else{
-        const hashedPassword = await bcrypt.hash(password,10);
-        existingUserViaEmail.password=hashedPassword;
-        existingUserViaEmail.verificationToken=verificationCode;
-        existingUserViaEmail.verificationTokenExpiry=new Date(Date.now()+60*60*1000);
+      if (existingUserViaEmail.isVerified) return ApiRes(400, "User with this email already exists.");
+      else {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        existingUserViaEmail.password = hashedPassword;
+        existingUserViaEmail.verificationToken = verificationToken;
+        existingUserViaEmail.verificationTokenExpiry = new Date(Date.now() + 60 * 60 * 1000);
         await existingUserViaEmail.save();
-        }
+      }
     } else {
       const hashedPassword = await bcrypt.hash(password, 10);
       const newUser = await User.create({
@@ -44,25 +44,26 @@ export async function POST(req: NextRequest) {
         isVerified: false,
         isAcceptingMessages: true,
         verificationTokenExpiry: new Date(Date.now() + 60 * 60 * 1000), // 1 hour from now
-        verificationToken: verificationCode,
+        verificationToken: verificationToken,
       });
 
-      if(!newUser)ApiRes(400,"error while creating user.");   
+      if (!newUser) ApiRes(400, "error while creating user.");
+      var userId = newUser._id;
     }
 
     //mail
     //   const emailResponse = await sendVerificatioEmail({
     //     email,
     //     userName,
-    //     verificationCode,
+    //     verificationToken,
     //   });
     //   if (!emailResponse.success) {
     //     return ApiRes(400,"error while sending mail for verification",emailResponse.message);        
     // }
-    return ApiRes(200,"User registered successfully and mail sent for verification.");
-    
+    return ApiRes(200, "User registered successfully and mail sent for verification.",userId);
+
   } catch (error) {
     console.log(`Error while sending verification mail ${error}`);
-    return  ApiRes(500,"error while sending mail for verification")
+    return ApiRes(500, "error while sending mail for verification")
   }
 }
