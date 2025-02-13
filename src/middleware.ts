@@ -23,7 +23,7 @@ return NextResponse.redirect(new URL("/sign-in", request.url));
 
 // where all the routes are configured on which the middleware runs
 export const config = {
-  matcher: ["/sign-up", "/sign-in", "/verify" ],
+  matcher: ["/sign-up", "/sign-in", "/verify"],
 };
 
 export { default } from "next-auth/middleware";

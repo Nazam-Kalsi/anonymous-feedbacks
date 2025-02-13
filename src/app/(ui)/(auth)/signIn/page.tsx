@@ -109,7 +109,6 @@ const page = (props: Props) => {
           </div>
           <div className="flex flex-1 items-center justify-center">
             <DotPattern
-
               className={"[mask-image:radial-gradient(550px_circle_at_top_right,white,transparent)]"}
             />
             <div className="w-full max-w-xs">

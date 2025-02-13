@@ -68,7 +68,6 @@ const Icons = {
 const DATA = {
   navbar: [
     { href: "/dashboard", icon: HomeIcon, label: "Dashboard" },
-    { href: "#", icon: PencilIcon, label: "Blog" },
   ],
   contact: {
     social: {
@@ -103,10 +102,11 @@ export function Header() {
     signOut();
   }
   return (
-    <>
+    <div className="sticky top-0 mx-auto w-full z-50">
       {/* <span className="pointer-events-none whitespace-pre-wrap bg-gradient-to-b from-black to-gray-300/80 bg-clip-text text-center text-8xl font-semibold leading-none text-transparent dark:from-white dark:to-slate-900/10">
         Dock
       </span> */}
+      
       <TooltipProvider delayDuration={0}>
         <div className="flex justify-between items-center  w-full">
         <Dock>
@@ -222,6 +222,6 @@ export function Header() {
         }
         </div>
       </TooltipProvider>
-    </>
+    </div>
   );
 }

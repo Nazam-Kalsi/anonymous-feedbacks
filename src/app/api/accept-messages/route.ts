@@ -13,16 +13,18 @@ async function toggleUserMessageStatus(req: NextRequest) {
   if (!session || !user) return ApiRes(400, "Unauthenticated");
 
   const { acceptingMessagesStatus } = await req.json();
-  const updatedUser = User.findByIdAndUpdate(
-    { id: user._id },
-    { isacceptingMessages: acceptingMessagesStatus }
+  console.log(acceptingMessagesStatus);
+  const updatedUser = await User.findByIdAndUpdate(
+    user._id,
+    { isAcceptingMessages: acceptingMessagesStatus },
+    { new: true }
   );
   if (!updatedUser) return ApiRes(400, "User not found");
-  console.log(session);
+console.log("updatedUser : ",updatedUser);
   return ApiRes(
     200,
     "user accepting messages status changed successfully",
-    updatedUser
+    {acceptingMessagesStatus:updatedUser.isAcceptingMessages}
   );
 }
 export const POST = handler(toggleUserMessageStatus);
@@ -34,9 +36,9 @@ async function getUserMessageStatus(req: NextRequest) {
 
   const userFromDb = await User.findById(user._id);
   if (!userFromDb) return ApiRes(404, "User not found!");
-  console.log(userFromDb);
+  console.log('user DB :', userFromDb);
 
-  return ApiRes(200, "User message status found successfully", {
+  return ApiRes(200, "User message acceptance status fetched successfully.", {
     isAcceptingMessages: userFromDb.isAcceptingMessages,
   });
 }
