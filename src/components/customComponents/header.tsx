@@ -15,6 +15,9 @@ import {
 import { cn } from "@/lib/utils";
 import { Dock, DockIcon } from "@/components/dock";
 import { ThemeProvider } from "./toggleTheme";
+import { useSession, signOut } from "next-auth/react";
+import { User } from "next-auth";
+import { LogIn, ContactRound, UserRound, LogOut } from 'lucide-react';
 
 export type IconProps = React.HTMLAttributes<SVGElement>;
 
@@ -64,7 +67,7 @@ const Icons = {
 
 const DATA = {
   navbar: [
-    { href: "#", icon: HomeIcon, label: "Home" },
+    { href: "/dashboard", icon: HomeIcon, label: "Dashboard" },
     { href: "#", icon: PencilIcon, label: "Blog" },
   ],
   contact: {
@@ -94,13 +97,22 @@ const DATA = {
 };
 
 export function Header() {
+  const { data:session, status } = useSession();
+  console.log(session);
+  const logout = ()=>{
+    signOut();
+  }
   return (
     <>
       {/* <span className="pointer-events-none whitespace-pre-wrap bg-gradient-to-b from-black to-gray-300/80 bg-clip-text text-center text-8xl font-semibold leading-none text-transparent dark:from-white dark:to-slate-900/10">
         Dock
       </span> */}
       <TooltipProvider delayDuration={0}>
-        <Dock direction='bottom'>
+        <div className="flex justify-between items-center  w-full">
+        <Dock>
+              <p className="uppercase">FeedBacks</p>
+        </Dock>
+        <Dock direction='bottom' >
           {DATA.navbar.map((item) => (
             <DockIcon key={item.label}>
               <Tooltip>
@@ -148,7 +160,7 @@ export function Header() {
           <DockIcon>
             <Tooltip>
               <TooltipTrigger asChild>
-                <ThemeProvider/>
+                <ThemeProvider />
               </TooltipTrigger>
               <TooltipContent>
                 <p>Theme</p>
@@ -156,6 +168,59 @@ export function Header() {
             </Tooltip>
           </DockIcon>
         </Dock>
+
+          
+          { session ?
+        <Dock direction='bottom' >
+           <DockIcon>
+            <Tooltip>
+              <TooltipTrigger asChild>
+              <UserRound size={18} color="lightblue"/>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>User Account</p>
+              </TooltipContent>
+            </Tooltip>
+          </DockIcon>
+           <DockIcon>
+            <Tooltip>
+              <TooltipTrigger asChild>
+              <LogOut size={18} onClick={logout} color="red"/>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Logout</p>
+              </TooltipContent>
+            </Tooltip>
+          </DockIcon>          
+        </Dock>
+        :<Dock direction='bottom' >
+        <DockIcon>
+         <Tooltip>
+           <TooltipTrigger asChild>
+            <Link href={'/signIn'}>
+           <LogIn size={18} />
+            </Link>
+           </TooltipTrigger>
+           <TooltipContent>
+             <p>Login</p>
+           </TooltipContent>
+         </Tooltip>
+       </DockIcon>
+        <DockIcon>
+         <Tooltip>
+           <TooltipTrigger asChild>
+            <Link href={'/signup'}>
+           <ContactRound size={18}/>
+            </Link>
+           </TooltipTrigger>
+           <TooltipContent>
+             <p>Sign Up</p>
+           </TooltipContent>
+         </Tooltip>
+       </DockIcon>          
+     </Dock>
+        }
+        </div>
       </TooltipProvider>
     </>
   );
