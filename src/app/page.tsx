@@ -6,6 +6,8 @@ import { AnimatedList } from "@/components/magicui/animated-list";
 import { cn } from "@/lib/utils";
 import {msgData} from '@/data/msgData';
 import { InteractiveGridPattern } from "@/components/magicui/interactive-grid-pattern";
+import { array } from "zod";
+import Card from "@/components/customComponents/card";
  
 interface Item {
   name: string;
@@ -81,7 +83,16 @@ export default function Home() {
     </div>
       </main>
       <section className="relative z-[51] border rounded-xl h-52 shadow-[0px_-47px_58px_-9px_rgba(147,_51,_234,_0.5)]">
+        <div className="flex justify-around items-center">
 
+        {
+          [1,2,3].map(()=>{
+            return(
+              <Card />
+            )
+          })
+        }
+        </div>
       </section>
       <section className={cn(
         "relative flex h-[500px] w-full flex-col overflow-hidden p-2 px-8"

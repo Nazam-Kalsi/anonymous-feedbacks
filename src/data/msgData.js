@@ -1,6 +1,6 @@
 export const msgData = [
     {
-      name: "O caption",
+      name: "Caption",
       description: "Carpe diem. Seize the day.",
       time: "15m ago",
       color: "#00C9A7",
