@@ -95,10 +95,11 @@ const DATA = {
 
 export function Header() {
   return (
-    <>
+    <div className="fixed mx-auto w-full z-50">
       {/* <span className="pointer-events-none whitespace-pre-wrap bg-gradient-to-b from-black to-gray-300/80 bg-clip-text text-center text-8xl font-semibold leading-none text-transparent dark:from-white dark:to-slate-900/10">
         Dock
       </span> */}
+      
       <TooltipProvider delayDuration={0}>
         <Dock direction='bottom'>
           {DATA.navbar.map((item) => (
@@ -157,6 +158,6 @@ export function Header() {
           </DockIcon>
         </Dock>
       </TooltipProvider>
-    </>
+    </div>
   );
 }

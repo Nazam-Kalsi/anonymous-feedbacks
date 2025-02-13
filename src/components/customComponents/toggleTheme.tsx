@@ -16,9 +16,9 @@ export const ThemeProvider = ({className}:Props) => {
         setIsDarkTheme(darkModeEnabled);
     }
     return (
-        <RippleButton className={`border-0 ${className}`} onClick={toggleTheme}>
+        <div className={`border-0 ${className}`} onClick={toggleTheme}>
             {isDarkTheme ? <SunMedium /> : <Moon />}
-        </RippleButton>
+        </div>
     )
 
 }
