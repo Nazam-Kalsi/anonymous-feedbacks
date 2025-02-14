@@ -49,3 +49,5 @@ export const featuresData = [
     logo: <GlobeLock size={45} />,
   },
 ];
+
+export const colors = ['#1E86FF','#00C9A7', '#FFB800', '#FF3D71', '#1E86FF'];

@@ -7,10 +7,11 @@ import { User as NextAuthUser } from "next-auth";
 import mongoose from "mongoose";
 import User from "@/models/user.model";
 
-async function getAllMessages(req:NextRequest){
+async function getAllMessages(req:NextRequest,{params}:{params:{page:number;limit:number}}){
+    const { page = 1,limit = 10 } = params;
     const session=await getServerSession(authOptions);
     const sessionUser:NextAuthUser=session?.user as NextAuthUser; 
-
+    const skipDoc = page-1*limit;
     if(!session || !sessionUser) return ApiRes(401,"user not found"); 
     //id is in string
 
@@ -20,7 +21,9 @@ async function getAllMessages(req:NextRequest){
         {$match:{_id:userId}},
         {$unwind:'$messages'},
         {$sort:{'messages.createdAt':-1}},
-        {$group:{_id:'$_id','messages':{$push:'$messages'}}}
+        {$group:{_id:'$_id','messages':{$push:'$messages'}}},
+        {$skip:Number((page-1)*limit)},
+        {$limit:Number(limit)}
     ])
 
     if(!user) return ApiRes(400,'User not found');

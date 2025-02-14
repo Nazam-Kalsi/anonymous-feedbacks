@@ -1,21 +1,26 @@
 "use client"
+import CopyButton from '@/components/customComponents/copyButton';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { MessageInterface } from '@/models/message.model';
 import { isAcceptingMessagesSchema } from '@/schema/acceptingMessages.schema';
+import { ApiResponse } from '@/types/apiResponse';
 import { zodResolver } from '@hookform/resolvers/zod';
-import axios from 'axios';
-import { CheckCheck, Clipboard } from 'lucide-react';
+import axios, { AxiosError } from 'axios';
+import { Loader2 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
+import { setLazyProp } from 'next/dist/server/api-utils';
 import React, { useCallback, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form';
 
 type Props = {}
 
 const page = (props: Props) => {
-    const [messagesAcceptingStatus, setMessagesAcceptingStatus] = useState<string>();
-    const [copy, setCopy] = useState<boolean>(false);
+    
     const [messages,setMessages] = useState<MessageInterface[]>([]);
+    const [page,setPage] = useState<number>(1);
+    const [loadMore,setLoadMore] = useState<boolean>(true);
+    const [loading,setLoading] = useState<boolean>(false);
     const {toast} = useToast(); 
     const form = useForm({
         resolver: zodResolver(isAcceptingMessagesSchema),
@@ -28,22 +33,7 @@ const page = (props: Props) => {
 
     const {data:session} = useSession();
 
-
-
-    const url = '1234567890'
-
-    const copyText = () => {
-        navigator.clipboard.writeText(url);
-        setCopy(true);
-    }
-
-    useEffect(() => {
-        const timeoutId = setTimeout(() => {
-            setCopy(false);
-        }, 3000)
-        return () => clearTimeout(timeoutId);
-
-    }, [copy])
+    const url = '1234567890'   
 
     const isAcceptingMessages = async ()=>{
         try {
@@ -75,10 +65,26 @@ const page = (props: Props) => {
         }
     }
 
+    const getMessages = async()=>{
+        try{
+            setLoading(true);
+            const res = await axios.get(`/api/get-messages?page=${page}&limit=10`);
+            console.log(res);
+            setPage(prev =>prev+1);
+            if(res.data.data.messages.length<10) setLoadMore(false);
+            // setMessages(prev => prev + res.data.data.messages);
+        }catch(error){
+            const axiosError= error as AxiosError<ApiResponse>;
+            toast({
+                title:"Uh oh! Something went wrong.",
+                description:`${axiosError?.response?.data}` || 'Error while fetching Messages.',
+                variant:'destructive',
+            })
+        } finally{
+            setLoading(false);
+        }
 
-     useEffect(() => {
-        setMessagesAcceptingStatus(acceptingMessage ? "ON" : "OFF")
-    }, [acceptingMessage])
+    }
 
     useEffect(()=>{
         isAcceptingMessages();
@@ -99,31 +105,19 @@ const page = (props: Props) => {
                         className="absolute inset-y-0 start-0 m-1 size-6 rounded-full bg-gray-300 ring-[6px] ring-inset ring-red-700 transition-all peer-checked:start-8 peer-checked:w-2 peer-checked:bg-white peer-checked:ring-transparent"
                     ></span>
                 </label>
-                <p className={`font-semibold text-sm ${acceptingMessage ? 'text-green-600' : 'text-red-600'}`}>{messagesAcceptingStatus}</p>
+                <p className={`font-semibold text-sm ${acceptingMessage ? 'text-green-600' : 'text-red-600'}`}>{acceptingMessage?'ON':'OFF'}</p>
             </div>
             {/* copy */}
-            <div className='flex justify-around items-center'>
-                <p>{url}</p>
-
-                <div className="flex items-center justify-center p-2 cursor-pointer rounded-md font-medium relative z-[9999999999] data-[tooltip]:after:content-[attr(data-tooltip)] data-[tooltip]:after:mt-2 data-[tooltip]:after:text-sm data-[tooltip]:after:invisible data-[tooltip]:after:scale-50 data-[tooltip]:after:origin-top data-[tooltip]:after:opacity-0 hover:data-[tooltip]:after:visible hover:data-[tooltip]:after:opacity-100 hover:data-[tooltip]:after:scale-100 data-[tooltip]:after:transition-all data-[tooltip]:after:absolute data-[tooltip]:after:bg-white data-[tooltip]:after:top-[-35px] data-[tooltip]:after:left-1/2 data-[tooltip]:after:-translate-x-1/2 data-[tooltip]:after:-z-[1] data-[tooltip]:after:px-2.5 data-[tooltip]:after:py-1 data-[tooltip]:after:min-h-fit data-[tooltip]:after:min-w-fit data-[tooltip]:after:rounded-md data-[tooltip]:after:drop-shadow data-[tooltip]:before:mt-2 data-[tooltip]:before:drop-shadow data-[tooltip]:after:text-center data-[tooltip]:after:text-zinc-800 data-[tooltip]:after:whitespace-nowrap data-[tooltip]:after:text-[10px] data-[tooltip]:before:invisible data-[tooltip]:before:opacity-0 hover:data-[tooltip]:before:visible hover:data-[tooltip]:before:opacity-100 data-[tooltip]:before:transition-all data-[tooltip]:before:bg-white data-[tooltip]:before:[clip-path:polygon(50%_0,0_100%,100%_100%)] data-[tooltip]:before:absolute data-[tooltip]:before:top-full data-[tooltip]:before:left-1/2 data-[tooltip]:before:-translate-x-1/2 data-[tooltip]:before:z-0 data-[tooltip]:before:w-3 data-[tooltip]:before:h-[4px]"
-                    data-tooltip={!copy ? 'Copy' : 'Copied'}
-                >
-                    <Button variant='outline' onClick={copyText} className="relative">
-                        {copy ? <CheckCheck /> : <Clipboard />}
-                    </Button>
-                </div>
-            </div>
+           <CopyButton url={url}/>
             {/* messages */}
             <div>
             {messages.length ? messages.map((message,index)=>{
                 return(
                     <div>{index+1}. {message.message}</div>
                 )
-            })
-            : <p>No messages yet!</p>
-        }
+            }): <p>No messages yet!</p>}            
+            {loadMore && <Button onClick={getMessages} variant='ghost'>{loading ? <Loader2/> : 'Load More'}</Button>}
             </div>
-
         </>
     )
 }

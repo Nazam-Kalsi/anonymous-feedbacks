@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarIcon, HomeIcon, MailIcon, PencilIcon } from "lucide-react";
+import { CalendarIcon, HomeIcon, MailIcon, PencilIcon, SquareKanban } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
@@ -67,7 +67,8 @@ const Icons = {
 
 const DATA = {
   navbar: [
-    { href: "/dashboard", icon: HomeIcon, label: "Dashboard" },
+    { href: "/u", icon: HomeIcon, label: "Home" },
+    { href: "/dashboard", icon: SquareKanban, label: "Dashboard" },
   ],
   contact: {
     social: {
@@ -110,7 +111,7 @@ export function Header() {
       <TooltipProvider delayDuration={0}>
         <div className="flex justify-between items-center  w-full">
         <Dock>
-              <p className="uppercase">FeedBacks</p>
+              <Link className="uppercase" href={`/`}>FeedBacks</Link>
         </Dock>
         <Dock direction='bottom' >
           {DATA.navbar.map((item) => (
@@ -175,7 +176,9 @@ export function Header() {
            <DockIcon>
             <Tooltip>
               <TooltipTrigger asChild>
+                {/* <Link href={`/dashboard`}> */}
               <UserRound size={18} color="lightblue"/>
+                {/* </Link> */}
               </TooltipTrigger>
               <TooltipContent>
                 <p>User Account</p>
