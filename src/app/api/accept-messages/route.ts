@@ -36,7 +36,7 @@ async function getUserMessageStatus(req: NextRequest) {
 
   const userFromDb = await User.findById(user._id);
   if (!userFromDb) return ApiRes(404, "User not found!");
-  console.log('user DB :', userFromDb);
+  // console.log('user DB :', userFromDb);
 
   return ApiRes(200, "User message acceptance status fetched successfully.", {
     isAcceptingMessages: userFromDb.isAcceptingMessages,

@@ -29,6 +29,8 @@ export async function POST(req: NextRequest) {
 
         if (!message) return ApiRes(400, "message not sent, try again later");
 
+        await User.findByIdAndUpdate(reciever._id,{$push:{messages:message._id}});
+    
         return ApiRes(200, "message sent succesfully");
     } catch (error) {
         console.log(error);

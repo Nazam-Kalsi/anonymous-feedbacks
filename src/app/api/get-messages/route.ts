@@ -7,28 +7,58 @@ import { User as NextAuthUser } from "next-auth";
 import mongoose from "mongoose";
 import User from "@/models/user.model";
 
-async function getAllMessages(req:NextRequest,{params}:{params:{page:number;limit:number}}){
-    const { page = 1,limit = 10 } = params;
-    const session=await getServerSession(authOptions);
-    const sessionUser:NextAuthUser=session?.user as NextAuthUser; 
-    const skipDoc = page-1*limit;
-    if(!session || !sessionUser) return ApiRes(401,"user not found"); 
-    //id is in string
+async function getAllMessages(req: NextRequest) {
+  const page = Number(req.nextUrl.searchParams.get("page")) || 1;
+  const limit = Number(req.nextUrl.searchParams.get("limit")) || 10;
+  const session = await getServerSession(authOptions);
+  const sessionUser: NextAuthUser = session?.user as NextAuthUser;
 
-    const userId = new mongoose.Types.ObjectId(sessionUser._id); //for aggrigation we need mongoose object id
+  if (!session || !sessionUser) return ApiRes(401, "user not found");
+  //id is in string
 
-    const user = await User.aggregate([
-        {$match:{_id:userId}},
-        {$unwind:'$messages'},
-        {$sort:{'messages.createdAt':-1}},
-        {$group:{_id:'$_id','messages':{$push:'$messages'}}},
-        {$skip:Number((page-1)*limit)},
-        {$limit:Number(limit)}
-    ])
+  const userId = new mongoose.Types.ObjectId(sessionUser._id); //for aggrigation we need mongoose object id
 
-    if(!user) return ApiRes(400,'User not found');
+  const user = await User.aggregate([
+    { 
+        $match: { _id: new mongoose.Types.ObjectId(userId) } // Ensure _id is an ObjectId
+      },
+      {
+        $lookup: {
+          from: "messages",
+          let: { userMessages: "$messages" }, // Pass user's messages array
+          pipeline: [
+            {
+              $match: { $expr: { $in: ["$_id", "$$userMessages"] } } // Match messages from user's list
+            },
+            {
+              $project: {
+                message: 1,
+                _id: 1,
+                createdAt:1,
+              }
+            }
+          ],
+          as: "messages"
+        }
+      },
+    {$unwind:'$messages'},
+    {$sort:{'message.createdAt':-1}},
+    {$group:{_id:'$_id', messages: { 
+        $push: {
+          messageId: "$messages._id",
+          message: "$messages.message",
+          createdAt: "$messages.createdAt"
+        }
+      }}},
+    {$skip:(page-1)*limit},
+    {$limit:limit},
+  ]);
 
-    return ApiRes(200,'Messages retrieved successfully',user[0].messages);//TODO :read another method to return
+  console.log("user from get messages :", user);
+
+  if (!user) return ApiRes(400, "User not found");
+  // ,user[0].messages
+  return ApiRes(200, "Messages retrieved successfully",user[0]?.messages); //TODO :read another method to return
 }
 
-export const GET =handler(getAllMessages);
+export const GET = handler(getAllMessages);

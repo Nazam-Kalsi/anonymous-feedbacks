@@ -6,10 +6,10 @@ import { AnimatedList } from "@/components/magicui/animated-list";
 import { cn } from "@/lib/utils";
 import {featuresData, msgData} from '@/data/msgData';
 import { InteractiveGridPattern } from "@/components/magicui/interactive-grid-pattern";
-import { array } from "zod";
 import Card from "@/components/customComponents/card";
 import { memo } from "react";
 import { DotPattern } from "@/components/ui/dot-pattern";
+
  
 interface Item {
   name: string;
@@ -19,7 +19,7 @@ interface Item {
 }
 const msgData2 = Array.from({ length: 10 }, () => msgData).flat();
 
-const Notification = ({ name, description, color, time }: Item) => {
+const Notification = memo(({ name, description, color, time }: Item) => {
   return (
     <figure
       className={cn(
@@ -53,7 +53,7 @@ const Notification = ({ name, description, color, time }: Item) => {
       </div>
     </figure>
   );
-};
+});
 
 const HeaderTitle = ({heading,subHeading,className}:{heading:string;subHeading?:string,className?:string})=>{
   return(
@@ -92,7 +92,7 @@ const List = memo(()=>{
   )
 })
 
-export default function Home() {
+const H = memo(function Home() {
   return (
     <div className=" font-[family-name:var(--font-geist-sans)] ">
       <main className="flex flex-col justify-center items-center h-[86vh]"> 
@@ -135,4 +135,6 @@ export default function Home() {
       </footer>
     </div>
   );
-}
+})
+
+export default H;

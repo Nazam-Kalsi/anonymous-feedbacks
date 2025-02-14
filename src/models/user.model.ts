@@ -11,7 +11,7 @@ export interface UserInterface extends Document {
   verificationTokenExpiry: Date | null;
   isAcceptingMessages:boolean;
   updatePassword:boolean;
-  messages: MessageInterface[];
+  messages: mongoose.Schema.Types.ObjectId[];
 }
 
 const UserSchema: Schema<UserInterface> = new Schema(

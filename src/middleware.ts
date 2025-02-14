@@ -6,7 +6,7 @@ import { authOptions } from "./app/api/auth/[...nextauth]/options";
 export async function middleware(request: NextRequest,response:NextResponse) {
 
   const session = await getServerSession({ req: request, res:response,...authOptions })
-  console.log("session :",session);
+  // console.log("session :",session);
 
   const token = await getToken({ req: request });
   const url = request.nextUrl;

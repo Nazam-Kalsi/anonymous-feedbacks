@@ -69,15 +69,15 @@ const page = (props: Props) => {
         try{
             setLoading(true);
             const res = await axios.get(`/api/get-messages?page=${page}&limit=10`);
-            console.log(res);
+            console.log("messages :",res);
             setPage(prev =>prev+1);
-            if(res.data.data.messages.length<10) setLoadMore(false);
-            // setMessages(prev => prev + res.data.data.messages);
+            if(res.data.data.length<10) setLoadMore(false);
+            setMessages(prev => [...prev, ...res.data.data]);
         }catch(error){
             const axiosError= error as AxiosError<ApiResponse>;
             toast({
                 title:"Uh oh! Something went wrong.",
-                description:`${axiosError?.response?.data}` || 'Error while fetching Messages.',
+                description:`${axiosError?.response?.data.message}` || 'Error while fetching Messages.',
                 variant:'destructive',
             })
         } finally{
@@ -88,10 +88,11 @@ const page = (props: Props) => {
 
     useEffect(()=>{
         isAcceptingMessages();
+        getMessages();
     },[])
-
     return (
         <>
+        
             <div className='flex justify-center items-center border gap-2'>
                 <label
                     className="relative inline-block h-8 w-14 cursor-pointer rounded-full bg-gray-300 transition [-webkit-tap-highlight-color:_transparent] has-[:checked]:bg-green-500"
@@ -111,9 +112,9 @@ const page = (props: Props) => {
            <CopyButton url={url}/>
             {/* messages */}
             <div>
-            {messages.length ? messages.map((message,index)=>{
+            {messages.length ? messages?.map((message,index)=>{
                 return(
-                    <div>{index+1}. {message.message}</div>
+                    <div key={index} >{index+1}. {message.message}</div>
                 )
             }): <p>No messages yet!</p>}            
             {loadMore && <Button onClick={getMessages} variant='ghost'>{loading ? <Loader2/> : 'Load More'}</Button>}

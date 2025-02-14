@@ -33,24 +33,24 @@ function page({ }: Props) {
 
   const sendMessageToUser = async ({ content }: z.infer<typeof messageSchema>) => {
     console.log(content);
-    // try{
-    //   setLoading(true);
-    //   const dataToSend = {
-    //     userName:decodedName,
-    //     messageContent:content,
-    //   }
-    //   const res = await axios.post(`/api/send-message`,dataToSend);
+    try{
+      setLoading(true);
+      const dataToSend = {
+        userName:decodedName,
+        messageContent:content,
+      }
+      const res = await axios.post(`/api/send-message`,dataToSend);
 
-    // }catch(error){
-    //   const axiosError = error as AxiosError<ApiResponse>;
-    //   toast({
-    //     title: "Uh oh! Something went wrong.",
-    //     description: `${axiosError?.response?.data.message}` || 'Error while sending messages.',
-    //     variant: 'destructive',
-    //   })
-    // }finally{
-    //   setLoading(false);
-    // }
+    }catch(error){
+      const axiosError = error as AxiosError<ApiResponse>;
+      toast({
+        title: "Uh oh! Something went wrong.",
+        description: `${axiosError?.response?.data.message}` || 'Error while sending messages.',
+        variant: 'destructive',
+      })
+    }finally{
+      setLoading(false);
+    }
   }
   return (
     <div>{decodedName}
