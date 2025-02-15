@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import React, { useState } from "react";
+import React, { memo, useState } from "react";
 
 /**
  * InteractiveGridPattern is a component that renders a grid pattern with interactive squares.

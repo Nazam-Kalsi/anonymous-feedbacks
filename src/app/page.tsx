@@ -96,7 +96,7 @@ const H = memo(function Home() {
   return (
     <div className=" font-[family-name:var(--font-geist-sans)] ">
       <main className="flex flex-col justify-center items-center h-[86vh]"> 
-        <Grid/>
+        {/* <Grid/> */}
       <div
         className="group rounded-full border border-black/5 bg-neutral-100 text-base text-white transition-all ease-in hover:cursor-pointer hover:bg-neutral-200 dark:border-white/5 dark:bg-neutral-900 dark:hover:bg-neutral-800"
         >

@@ -2,7 +2,7 @@ import dbConnect from "@/lib/db";
 import User from "@/models/user.model";
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -28,7 +28,7 @@ export const authOptions: NextAuthOptions = {
 
           const authentication = await bcrypt.compare(
             credentials.password, //! recieve password then the hashed password.
-            user.password
+            user.password as string
           );
 
           if (!authentication) throw new Error("Invalid password!");
@@ -42,7 +42,7 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   pages: {
-    signIn: "/signin",
+    signIn: "/signIn",
   },
   session: {
     strategy: "jwt",

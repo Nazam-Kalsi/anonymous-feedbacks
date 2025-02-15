@@ -9,8 +9,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import axios, { AxiosError } from 'axios';
 import { Loader2 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
-import { setLazyProp } from 'next/dist/server/api-utils';
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form';
 
 type Props = {}
@@ -70,9 +69,14 @@ const page = (props: Props) => {
             setLoading(true);
             const res = await axios.get(`/api/get-messages?page=${page}&limit=10`);
             console.log("messages :",res);
-            setPage(prev =>prev+1);
-            if(res.data.data.length<10) setLoadMore(false);
-            setMessages(prev => [...prev, ...res.data.data]);
+            if(res.data && res.data.data){
+                setPage(prev =>prev+1);                
+                setMessages(prev => [...prev, ...res.data.data.messages]);
+                if(res.data.data.length<10)setLoadMore(false);
+            }
+            else{
+                setLoadMore(false);
+            } 
         }catch(error){
             const axiosError= error as AxiosError<ApiResponse>;
             toast({
@@ -93,7 +97,7 @@ const page = (props: Props) => {
     return (
         <>
         
-            <div className='flex justify-center items-center border gap-2'>
+            <div className='flex justify-center items-center gap-2'>
                 <label
                     className="relative inline-block h-8 w-14 cursor-pointer rounded-full bg-gray-300 transition [-webkit-tap-highlight-color:_transparent] has-[:checked]:bg-green-500"
                 >
@@ -117,7 +121,7 @@ const page = (props: Props) => {
                     <div key={index} >{index+1}. {message.message}</div>
                 )
             }): <p>No messages yet!</p>}            
-            {loadMore && <Button onClick={getMessages} variant='ghost'>{loading ? <Loader2/> : 'Load More'}</Button>}
+            {loadMore && <Button onClick={getMessages} className='fixed bottom-12 right-12' variant='ghost'>{loading ? <Loader2 className='animate-spin'/> : 'Load More'}</Button>}
             </div>
         </>
     )

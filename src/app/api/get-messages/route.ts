@@ -54,10 +54,9 @@ async function getAllMessages(req: NextRequest) {
     {$limit:limit},
   ]);
 
-  console.log("user from get messages :", user);
+  // console.log("user from get messages :", user);
 
   if (!user) return ApiRes(400, "User not found");
-  // ,user[0].messages
   return ApiRes(200, "Messages retrieved successfully",user[0]?.messages); //TODO :read another method to return
 }
 
