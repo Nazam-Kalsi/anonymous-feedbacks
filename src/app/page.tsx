@@ -130,7 +130,7 @@ const H = memo(function Home() {
       </section>
       <List/>
       <footer className="text-center">
-        <h4 className="text-[200px] font-bold uppercase leading-none pointer-events-none whitespace-pre-wrap bg-gradient-to-b from-gray-700/80 to-black bg-clip-text text-center text-transparent dark:from-white/50 dark:to-slate-900/10 text-xl">Anonymous</h4>
+        <h4 className="lg:text-[200px] font-bold uppercase leading-none pointer-events-none whitespace-pre-wrap bg-gradient-to-b from-gray-700/80 to-black bg-clip-text text-center text-transparent dark:from-white/50 dark:to-slate-900/10 ">Anonymous</h4>
         <h4 className="font-bold text-xl leading-none pointer-events-none whitespace-pre-wrap bg-gradient-to-b from-gray-700/80 to-black bg-clip-text text-center text-transparent dark:from-white dark:to-slate-400/10">Feedbacks</h4>
       </footer>
     </div>
