@@ -9,7 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ai-sdk/groq": "^1.1.10",
     "@ai-sdk/openai": "^1.1.9",
+    "@ai-sdk/provider": "^1.0.8",
     "@hookform/resolvers": "^3.10.0",
     "@radix-ui/react-label": "^2.1.2",
     "@radix-ui/react-separator": "^1.1.2",
@@ -26,7 +28,7 @@
     "input-otp": "^1.4.2",
     "lucide-react": "^0.474.0",
     "mongoose": "^8.9.5",
-    "motion": "^12.4.2",
+    "motion": "^12.4.7",
     "next": "15.1.6",
     "next-auth": "^4.24.11",
     "react": "^19.0.0",

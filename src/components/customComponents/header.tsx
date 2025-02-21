@@ -57,7 +57,7 @@ export function Header() {
     signOut();
   }
   return (
-    <div className="sticky top-0 mx-auto w-full z-50">
+    <div className="sticky top-0 mx-auto w-full z-50 mb-4">
       {/* <span className="pointer-events-none whitespace-pre-wrap bg-gradient-to-b from-black to-gray-300/80 bg-clip-text text-center text-8xl font-semibold leading-none text-transparent dark:from-white dark:to-slate-900/10">
         Dock
       </span> */}
