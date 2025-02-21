@@ -1,7 +1,7 @@
 import ApiRes from "@/lib/apiRes";
 import { handler } from "@/lib/handler";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../auth/[...nextauth]/options";
+import { authOptions } from "../../auth/[...nextauth]/options";
 import User from "@/models/user.model";
 import { NextRequest } from "next/server";
 import mongoose from "mongoose";

@@ -49,7 +49,7 @@ function page({}: Props) {
         verificationCode: values.verificationCode,
         id:params.id,
       };
-      const res = await axios.post(`/api/verify-user`,dataToSend);
+      const res = await axios.post(`/api/auth/verify-user`,dataToSend);
       console.log(res.data.data.setNewPassword);
 
       if(res.data.data.setNewPassword){

@@ -4,7 +4,7 @@ import ApiRes from "@/lib/apiRes";
 import Message from "@/models/message.model";
 import User from "@/models/user.model";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../auth/[...nextauth]/options";
+import { authOptions } from "../../auth/[...nextauth]/options";
 
 
 // session :  {
@@ -31,4 +31,4 @@ async function deleteMessage(req: NextRequest) {
     return ApiRes(200, "Message deleted successfully.")
 }
 
-export const GET = handler(deleteMessage);
+export const DELETE = handler(deleteMessage);

@@ -9,9 +9,9 @@ import User from "@/models/user.model";
 export async function POST(req: NextRequest) {
     dbConnect();
     try {
-        const session = await getServerSession(authOptions);
-        const sender: NextAuthUser = session?.user as NextAuthUser;
-        if (!sender || !session) return ApiRes(404, "not Authenticated");
+        // const session = await getServerSession(authOptions);
+        // const sender: NextAuthUser = session?.user as NextAuthUser;
+        // if (!sender || !session) return ApiRes(404, "not Authenticated");
         
 
         const { userName, messageContent } = await req.json();
@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
         if (!reciever.isAcceptingMessages) return ApiRes(400, "reciever isn't recieving messages at this movement,");
 
         const message = await Message.create({
-            sender: sender._id,
+            // sender: sender._id,
             reciever: reciever._id,
             message: messageContent,
         });

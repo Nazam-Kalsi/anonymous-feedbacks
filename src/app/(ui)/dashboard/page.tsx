@@ -1,47 +1,79 @@
-"use client";
-import AcceptMessageStatus from "@/components/customComponents/acceptMessageStatus";
-import CopyButton from "@/components/customComponents/copyButton";
-import MessageCard from "@/components/customComponents/messageCard";
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
-import { MessageInterface } from "@/models/message.model";
-import { isAcceptingMessagesSchema } from "@/schema/acceptingMessages.schema";
-import { ApiResponse } from "@/types/apiResponse";
-import { zodResolver } from "@hookform/resolvers/zod";
-import axios, { AxiosError } from "axios";
-import { Loader2 } from "lucide-react";
-import { useSession } from "next-auth/react";
-import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+"use client"
+import AcceptMessageStatus from '@/components/customComponents/acceptMessageStatus';
+import CopyButton from '@/components/customComponents/copyButton';
+import MessageCard from '@/components/customComponents/messageCard';
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
+import { MessageInterface } from '@/models/message.model';
+import { isAcceptingMessagesSchema } from '@/schema/acceptingMessages.schema';
+import { ApiResponse } from '@/types/apiResponse';
+import { zodResolver } from '@hookform/resolvers/zod';
+import axios, { AxiosError } from 'axios';
+import { Cross, Loader2 } from 'lucide-react';
+import { useSession } from 'next-auth/react';
+import React, { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form';
+
+type DeletePopupStateType={
+    status:boolean;
+    messageId:string | null;
+    deleting:boolean;
+};
+
+type PopupTypes={
+    setDeletePopup:React.Dispatch<React.SetStateAction<DeletePopupStateType>>;
+    deleteMsg:()=>Promise<void>;
+    className?:string;
+    deletePopup:DeletePopupStateType;
+}
+
+
+const DeletePopup = ({setDeletePopup,deleteMsg,className,deletePopup} : PopupTypes)=>{
+
+    return(
+        <div className='absolute top-0 h-screen w-screen flex justify-center items-center z-[99] dark:bg-black/50 bg-white/50'>
+        <div className={`flex flex-col gap-2 justify-center items-center border p-4 rounded-lg dark:bg-black bg-white ${className}`}>
+            <div className='flex justify-between w-full'>
+                <h2 className='font-semibold'>Delete message</h2>
+               <Button onClick={()=>setDeletePopup({status:false,messageId:null,deleting:false})}>X</Button>
+            </div>
+            <p className='text-gray-400'>Are you sure you want to delete this message!</p>
+            <Button variant='destructive' onClick={deleteMsg}>{deletePopup.deleting?<Loader2 className='animate-spin'/>:'Delete it'}</Button>
+        </div>
+        </div>
+    )
+}
 
 type Props = {};
 type MessageType={
     message:string;
     createdAt:string;
     messageId:string;
+    _id:string;
 }
 const page = (props: Props) => {
-  const [messages, setMessages] = useState<MessageType[]>([]);
-  const [page, setPage] = useState<number>(1);
-  const [loadMore, setLoadMore] = useState<boolean>(true);
-  const [loading, setLoading] = useState<boolean>(false);
-  const { toast } = useToast();
-  const form = useForm({
-    resolver: zodResolver(isAcceptingMessagesSchema),
-    defaultValues: {
-      acceptingMessages: false,
-    },
-  });
-  const { watch, register, setValue } = form;
-  const acceptingMessage = watch("acceptingMessages");
-
-  const { data: session } = useSession();
+    
+    const [messages,setMessages] = useState<MessageType[]>([]);
+    const [page,setPage] = useState<number>(1);
+    const [loadMore,setLoadMore] = useState<boolean>(true);
+    const [loading,setLoading] = useState<boolean>(false);
+    const [deletePopup,setDeletePopup] = useState<DeletePopupStateType>({status:false,messageId:null,deleting:false});
+    const {toast} = useToast(); 
+    const form = useForm({
+        resolver: zodResolver(isAcceptingMessagesSchema),
+        defaultValues: {
+            acceptingMessages: false,
+        },
+    });
+    const { watch, register,setValue } = form;
+    const acceptingMessage = watch('acceptingMessages');
+    const {data:session} = useSession();
 
   const url = window.location.origin + "/u/" + session?.user.userName;
 
   const isAcceptingMessages = async () => {
     try {
-      const res = await axios.get("/api/accept-messages");
+      const res = await axios.get("/api/messages/accept-messages");
       console.log(res);
       setValue("acceptingMessages", res.data.data.isAcceptingMessages);
     } catch (error) {
@@ -58,7 +90,7 @@ const page = (props: Props) => {
     setValue("acceptingMessages", !acceptingMessage);
     try {
       const dataToSend = { acceptingMessagesStatus: !acceptingMessage };
-      const res = await axios.post("/api/accept-messages", dataToSend);
+      const res = await axios.post("/api/messages/accept-messages", dataToSend);
       setValue("acceptingMessages", res.data.data.acceptingMessagesStatus);
     } catch (error) {
       setValue("acceptingMessages", acceptingMessage);
@@ -74,7 +106,7 @@ const page = (props: Props) => {
   const getMessages = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`/api/get-messages?page=${page}&limit=10`);
+      const res = await axios.get(`/api/messages/get-messages?page=${page}&limit=10`);
       console.log("messages :", res);
       if (res.data && res.data.data) {
         setPage((prev) => prev + 1);
@@ -95,16 +127,37 @@ const page = (props: Props) => {
     } finally {
       setLoading(false);
     }
-  };
+  }
+
+    const handleDeleteMessage= async(messageId:string)=>{
+        const prevMsg = [...messages];
+        try{
+            setMessages(messages.filter((message)=>message._id!==messageId));
+            setDeletePopup(prev=>({...prev,deleting:true}));
+            const res = await axios.delete(`/api/messages/delete-message/${messageId}`);
+            console.log(res);
+        }catch(error){
+            setMessages(prevMsg)
+            const axiosError = error as AxiosError<ApiResponse>;
+            toast({
+                title:"Uh oh! Something went wrong.",
+                description:`${axiosError?.response?.data.message}` || 'Error while deleting Message.',
+                variant:'destructive',
+            })
+        }finally{
+          setDeletePopup({deleting:false,status:false,messageId:null});
+
+        }
+    }
 
   useEffect(() => {
     isAcceptingMessages();
     getMessages();
   }, []);
   return (
+    <div className="overflow-hidden">
     <div className="space-y-4 mx-4 md:mt-8 ">
       <h2 className="text-xl uppercase font-bold">User Dashboard</h2>
-
       <CopyButton url={url} />
       <div className="flex items-center justify-start gap-4">
         <p className="text-gray-400">Toggle message recieving status</p>
@@ -115,13 +168,13 @@ const page = (props: Props) => {
         />
       </div>
       {/* messages */}
-      <div className="flex flex-col flex-wrap gap-4">
+      <div className="flex flex-col justify-center items-center flex-wrap gap-4">
         <p className="text-lg font-bold uppercase text-center">Recieved Messages</p>
-        <div className="flex flex-wrap gap-4">
+        <div className="flex flex-wrap gap-4 justify-around">
           {messages.length ? (
             messages?.map((message, index) => {
               return (
-                <MessageCard message={message.message} createdAt={message.createdAt} key={index} />
+                <MessageCard message={message.message} createdAt={message.createdAt} key={index} setDeletePopup={setDeletePopup} />
                 // <div key={index} >{index+1}. {message.message}</div>
               );
             })
@@ -139,6 +192,10 @@ const page = (props: Props) => {
           </Button>
         )}
       </div>
+      </div>
+      {deletePopup.status &&
+      <DeletePopup deletePopup={deletePopup} setDeletePopup={setDeletePopup} deleteMsg={()=>handleDeleteMessage(deletePopup.messageId as string)}/>
+      }
     </div>
   );
 };

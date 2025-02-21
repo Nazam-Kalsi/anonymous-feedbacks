@@ -3,7 +3,7 @@ import mongoose, { model, Schema, Document } from "mongoose";
 export interface MessageInterface extends Document {
   message: string;
   reciever: mongoose.Schema.Types.ObjectId;
-  sender: mongoose.Schema.Types.ObjectId;
+  // sender: mongoose.Schema.Types.ObjectId;
 }
 
 const MessageSchema: Schema<MessageInterface> = new Schema(
@@ -16,10 +16,10 @@ const MessageSchema: Schema<MessageInterface> = new Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
-    sender: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-    },
+    // sender: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   ref: "User",
+    // },
   },
   { timestamps: true }
 );

@@ -3,7 +3,7 @@ import dbConnect from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { NextRequest } from "next/server";
 import { User as NextAuthUser } from "next-auth";
-import { authOptions } from "../auth/[...nextauth]/options";
+import { authOptions } from "../../auth/[...nextauth]/options";
 import User from "@/models/user.model";
 import { handler } from "@/lib/handler";
 

@@ -3,14 +3,16 @@ import React from 'react'
 type Props = {
     message:string;
     createdAt:string;
+    setDeletePopup:any;
+
 }
 
-const MessageCard = ({message, createdAt}: Props) => {
+const MessageCard = ({message, createdAt, setDeletePopup}: Props) => {
 
   
 
   return (
-<div className="flex flex-col gap-2 z-50 md:basis-[30%]">
+<div className="flex flex-col gap-2 z-50 md:basis-[30%] w-full">
   <div
     className="succsess-alert cursor-default flex items-center justify-between w-full p-2 text-justify rounded-lg dark:bg-[#232531] bg-white border dark:border-none px-[10px]"
   >
@@ -22,7 +24,8 @@ const MessageCard = ({message, createdAt}: Props) => {
       </div>
     </div>
     <button
-      className="text-gray-600 dark:hover:bg-white/5 hover:bg-black/5 p-1 rounded-md transition-colors ease-linear"
+      className="text-gray-600 hover:bg-white/5 p-1 rounded-md transition-colors ease-linear"
+      onClick={()=>setDeletePopup({status:true, message:null})}
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"

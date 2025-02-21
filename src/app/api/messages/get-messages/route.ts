@@ -2,7 +2,7 @@ import { NextRequest } from "next/server";
 import { handler } from "@/lib/handler";
 import ApiRes from "@/lib/apiRes";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../auth/[...nextauth]/options";
+import { authOptions } from "../../auth/[...nextauth]/options";
 import { User as NextAuthUser } from "next-auth";
 import mongoose from "mongoose";
 import User from "@/models/user.model";

@@ -63,7 +63,7 @@ function page({ }: Props) {
                 if (debounceUserName[0].trim().length === 0) {
                     return;
                 }
-                const req = await axios.post(`/api/check-unique-username?userName=${debounceUserName[0]}`);
+                const req = await axios.post(`/api/auth/check-unique-username?userName=${debounceUserName[0]}`);
                 setUserNameStatus(req.data);
             } catch (error) {
                 const axiosError = error as AxiosError<ApiResponse>;
@@ -82,7 +82,7 @@ function page({ }: Props) {
     async function onSubmit(values: z.infer<typeof signUpSchema>) {
         try {
             setLoading(true);
-            const res = await axios.post('/api/sign-up', values)
+            const res = await axios.post('/api/auth/sign-up', values)
             if (res) {
                 console.log(res.data);
                 route.push(`/${res.data.data}/verification`)

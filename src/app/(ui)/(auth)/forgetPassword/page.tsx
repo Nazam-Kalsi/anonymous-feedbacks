@@ -27,7 +27,7 @@ function page({ }: Props) {
                 return;
             }
             setError(null);
-            const res = await axios.post(`/api/forget-password`,{email});
+            const res = await axios.post(`/api/auth/forget-password`,{email});
             if(res){
                 console.log(res)
                 route.push(`/${res?.data.data}/verification`);

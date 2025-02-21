@@ -24,7 +24,7 @@ function page({ }: Props) {
   const getAllUsers = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`/api/get-all-users/?page=${page}&limit=10`);
+      const res = await axios.get(`/api/user/get-all-users/?page=${page}&limit=10`);
       const avaliableUsers = users;
       setUsers([...avaliableUsers, ...(res?.data?.data)]);
       if (res.data?.data?.length < 10) setLoadMore(false);
