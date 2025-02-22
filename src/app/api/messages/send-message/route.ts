@@ -1,7 +1,7 @@
 import ApiRes from "@/lib/apiRes";
 import dbConnect from "@/lib/db";
 import { NextRequest } from "next/server";
-import { authOptions } from "../auth/[...nextauth]/options";
+import { authOptions } from "../../auth/[...nextauth]/options";
 import { getServerSession, User as NextAuthUser } from "next-auth";
 import Message from "@/models/message.model";
 import User from "@/models/user.model";

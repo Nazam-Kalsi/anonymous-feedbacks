@@ -50,7 +50,7 @@ const page = (props: Props) => {
   const form = useForm<z.infer<typeof signInSchema>>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
-      userName: "nzm",
+      userName: "nzam",
       password: "nnzzmm",
     },
   })
@@ -75,7 +75,7 @@ const page = (props: Props) => {
         title: "Login successfully",
         description: "Wait while we redricting you to dashboard.",
       })
-      router.push("/");
+      router.push("/dashboard");
     }
     catch (error) {
       console.log("error : ", error);
@@ -170,9 +170,9 @@ const page = (props: Props) => {
                 </Form>
                 <div className="text-center text-sm">
                   Don&apos;t have an account?
-                  <a href="#" className="underline underline-offset-4">
+                  <Link href="/signup" className="underline underline-offset-4">
                     Sign up
-                  </a>
+                  </Link>
                 </div>
               </div>
             </div>

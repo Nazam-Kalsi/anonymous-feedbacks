@@ -49,7 +49,7 @@ function page({ }: Props) {
   }, [])
   console.log(users)
   return loading?<Loading/>:(
-    <section className='mt-6 p-4'>
+    <section className='mt-6 p-4 min-h-[80vh]'>
 
     <p className='font-bold uppercase leading-none pointer-events-none whitespace-pre-wrap bg-gradient-to-b from-gray-700/80 to-black bg-clip-text text-center text-transparent dark:from-white/50 dark:to-slate-900/10 text-6xl mb-2'>Users</p>
       <div className='flex justify-center items-center flex-wrap gap-2'>

@@ -11,7 +11,11 @@ export async function middleware(request: NextRequest) {
   console.log("token in middleware : ", token);
   const url = request.nextUrl;
 
-  if (!token && !url.pathname.startsWith('/signIn')) return NextResponse.redirect(new URL("/signIn", request.url));
+  if (!token && (
+    !url.pathname.startsWith('/signIn') &&
+    !url.pathname.startsWith('/signup')
+  )) 
+    return NextResponse.redirect(new URL("/signup", request.url));
 
   if (token && (
     url.pathname.startsWith('/signIn') ||
@@ -24,7 +28,7 @@ export async function middleware(request: NextRequest) {
 
 
 export const config = {
-  matcher: ["/signIn", "/signup", "/u/:path*"],
+  matcher: ["/signIn", "/signup",'/dashboard'],
 };
 
 export { default } from "next-auth/middleware";

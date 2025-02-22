@@ -57,7 +57,7 @@ export function Header() {
     signOut();
   }
   return (
-    <div className="sticky top-0 mx-auto w-full z-50 mb-4">
+    <div className="relative mx-auto w-full z-50 mb-4">
       {/* <span className="pointer-events-none whitespace-pre-wrap bg-gradient-to-b from-black to-gray-300/80 bg-clip-text text-center text-8xl font-semibold leading-none text-transparent dark:from-white dark:to-slate-900/10">
         Dock
       </span> */}
@@ -130,9 +130,9 @@ export function Header() {
            <DockIcon>
             <Tooltip>
               <TooltipTrigger asChild>
-                {/* <Link href={`/dashboard`}> */}
+                <Link href={`/u/${session?.user.userName}/${session?.user._id}`}>
               <UserRound size={18} color="lightblue"/>
-                {/* </Link> */}
+                </Link>
               </TooltipTrigger>
               <TooltipContent>
                 <p>User Account</p>

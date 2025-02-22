@@ -70,3 +70,12 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+.bg{
+  background-image:url("/images/whitebg.jpg");
+  background-size: cover;
+  background-position: center;
+}
+.bg:is(.dark *) {
+  background-image: none;
+}

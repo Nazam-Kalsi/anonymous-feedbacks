@@ -96,18 +96,15 @@ function page({ }: Props) {
 
     return (
         <div className=''>
-            {loading && <Loading/>}
-            <div className='flex justify-end'>
-                <ThemeProvider />
-            </div>
+            {loading && <Loading />}
             <div className="flex flex-col items-center justify-start overflow-hidden">
                 <div className="w-full max-w-sm md:max-w-3xl">
                     <div className='mb-6 flex flex-col items-center'>
-                        <GalleryVerticalEnd className="size-6" />
+                        {/* <GalleryVerticalEnd className="size-6" /> */}
                         {/* <h1 className='font-bold text-2xl'>Create your Account</h1> */}
                         <MorphingText texts={txt} />
                     </div>
-                    <div className={cn("flex flex-col gap-4",)}>
+                    <div className={cn("flex flex-col gap-3",)}>
                         <Card className="overflow-hidden">
                             <CardContent className="grid p-0 md:grid-cols-2">
                                 <Form {...form}>
@@ -175,7 +172,13 @@ function page({ }: Props) {
                                             )}
                                         />
                                         <Button variant={'default'}>{
-                                            loading?<Loader2 className='animate-spin'/>:'Login'}</Button>
+                                            loading ? <Loader2 className='animate-spin' /> : 'Login'}</Button>
+                                        <div className="text-center text-sm text-gray-500">
+                                            Already have an account?&nbsp;
+                                            <Link href="/signIn" className="underline underline-offset-4 dark:hover:text-white hover:text-black ">
+                                                Sign in
+                                            </Link>
+                                        </div>
                                     </form>
                                 </Form>
                                 <div className="relative hidden bg-muted md:block">

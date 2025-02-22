@@ -17,7 +17,7 @@ import { WarpBackground } from '@/components/magicui/warp-background';
 
 const AiMessageContainer = ({ content, onClick }: { content: string; onClick: MouseEventHandler<HTMLButtonElement> }) => {
   return (
-    <Button variant='outline' className='w-full py-8' onClick={onClick}>
+    <Button variant='outline' className='w-full py-8 text-wrap' onClick={onClick}>
       {content}
     </Button>
   )
@@ -75,8 +75,12 @@ function page({ }: Props) {
 
   const getAiSuggestion = async () => {
     try {
+      console.log('run')
       setSuggestionLoading(true);
       const res = await axios.get(`/api/ai-suggestion`);
+      const messageString = res.data.data.text;
+      const messages = messageString.split('||');
+      setAiSuggestions(messages);
 
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;
